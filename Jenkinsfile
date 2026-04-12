@@ -48,7 +48,8 @@ pipeline {
                     agent {
                         docker { 
                             // Esta imagen ya tiene Node, Chrome Headless y las dependencias de Linux
-                            image 'trion/ng-cli-karma:latest' 
+                            image 'trion/ng-cli-karma:latest'
+                            args '-u root'
                             reuseNode true
                         }
                     }
