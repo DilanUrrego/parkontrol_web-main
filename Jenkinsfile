@@ -60,7 +60,7 @@ pipeline {
                                 'DB_SID=xe',
                                 'NODE_ENV=test'
                             ]) {} 
-                            sh 'npm run test:cov' 
+                            sh 'NODE_ENV=test DB_TYPE=aqlite npm run test:cov' 
                             }
                     }
                 }
@@ -75,7 +75,6 @@ pipeline {
                     }*/
                     steps {
                         dir('frontend-angular') {
-                            sh 'npm ci'
                             sh 'npx ng test --watch=false --browsers=ChromeHeadless'
                         }
                     }
