@@ -18,7 +18,7 @@ describe('VistasService (Integración Real)', () => {
     module = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
-          type: 'oracle'
+          type: 'oracle',
           host: process.env.DB_HOST,
           port: Number(process.env.DB_PORT),
           username: process.env.DB_USERNAME,
@@ -31,7 +31,7 @@ describe('VistasService (Integración Real)', () => {
             IngresosPorParqueaderoMensualView
           ],
           logging: true,
-          synchronize: false
+          synchronize: true
         }),
         TypeOrmModule.forFeature([
         HistorialReservasView, 
