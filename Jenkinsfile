@@ -152,16 +152,18 @@ pipeline {
         }
     }
 
-    node {
-        post {
-            success {
-                echo "Despliegue exitoso."
-                echo "API  -> http://localhost:${BE_HOST_PORT}"
-                echo "Web  -> http://localhost:${FE_HOST_PORT}"
-            }
-            always {
-                // Limpiar imágenes huérfanas para no llenar el disco
-                sh 'docker image prune -f'
+    post {
+        success {
+            echo "Despliegue exitoso."
+            echo "API  -> http://localhost:${BE_HOST_PORT}"
+            echo "Web  -> http://localhost:${FE_HOST_PORT}"
+        }
+        always {
+            script {
+                node {
+                    echo "Limpiando imágenes de docker..."
+                    sh 'docker image prune -f'
+                }
             }
         }
     }
