@@ -41,7 +41,20 @@ pipeline {
             parallel {
                 stage('Backend – Tests') {
                     steps {
-                        dir('backend') { sh 'npm run test:cov' }
+                        dir('backend') {
+                            withEnv([
+                                'DB_TYPE=postgres',
+                                'JWT_SECRET=dev-secret',
+                                'DB_HOST=localhost',
+                                'DB_PORT=1521',
+                                'DB_USERNAME=system',
+                                'DB_PASSWORD=Admin123*',
+                                'DB_DATABASE=parkontrol_test',
+                                'DB_SID=xe',
+                                'NODE_ENV=test'
+                            ]) {} 
+                            sh 'npm run test:cov' 
+                            }
                     }
                 }
                 stage('Frontend – Tests') {

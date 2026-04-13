@@ -44,7 +44,7 @@ describe('VistasService (Integración Real)', () => {
     }).compile();
 
     service = module.get<VistasService>(VistasService);
-  });
+  }, 20000);
 
   // TEST 1: HISTORIAL POR EMPRESA
   it('debería retornar el historial de reservas y transformar las llaves a camelCase', async () => {

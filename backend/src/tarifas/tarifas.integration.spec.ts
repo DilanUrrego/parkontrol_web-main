@@ -42,7 +42,7 @@ describe('TarifasService - Pruebas de Integración (Oracle Real)', () => {
 
     service = module.get<TarifasService>(TarifasService);
     tarifaRepo = module.get<Repository<Tarifa>>(getRepositoryToken(Tarifa));
-  });
+  }, 20000);
 
   //Borra la tarifa si el test creó una
   afterEach(async () => {

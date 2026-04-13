@@ -39,7 +39,7 @@ describe('ParqueaderosService (Prueba de Integración Real)', () => {
     service = module.get<ParqueaderosService>(ParqueaderosService);
     parqueaderoRepo = module.get<Repository<Parqueadero>>(getRepositoryToken(Parqueadero));
     empresaRepo = module.get<Repository<Empresa>>(getRepositoryToken(Empresa));
-  });
+  }, 20000);
 
   it('Debería listar parqueaderos filtrados por empresa (Caja Blanca)', async () => {
     // 1. ARRANGE (Preparar datos en la DB real)
