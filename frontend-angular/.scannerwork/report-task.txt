@@ -1,6 +1,6 @@
-projectKey=frontend-Parkontrol
+projectKey=frontend-parkcontrol
 serverUrl=http://localhost:9000
 serverVersion=26.3.0.120487
-dashboardUrl=http://localhost:9000/dashboard?id=frontend-Parkontrol
-ceTaskId=4d26e1f1-ea02-40d3-938f-68ed9cdbdf66
-ceTaskUrl=http://localhost:9000/api/ce/task?id=4d26e1f1-ea02-40d3-938f-68ed9cdbdf66
+dashboardUrl=http://localhost:9000/dashboard?id=frontend-parkcontrol
+ceTaskId=5f872ec6-61db-43eb-a4b0-d86ca321b724
+ceTaskUrl=http://localhost:9000/api/ce/task?id=5f872ec6-61db-43eb-a4b0-d86ca321b724

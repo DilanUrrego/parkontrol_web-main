@@ -9,7 +9,7 @@ pipeline {
 
     environment {
         SONAR_SERVER  = 'SonarQube'
-        SONAR_TOKEN   = credentials('sonarqube-token')
+        SONAR_TOKEN   = credentials('sonar-token')
         BE_IMAGE      = 'parkontrol-backend'
         BE_CONTAINER  = 'parkontrol-api'
         BE_HOST_PORT  = '8000'
@@ -152,15 +152,17 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo "Despliegue exitoso."
-            echo "API  -> http://localhost:${BE_HOST_PORT}"
-            echo "Web  -> http://localhost:${FE_HOST_PORT}"
-        }
-        always {
-            // Limpiar imágenes huérfanas para no llenar el disco
-            sh 'docker image prune -f'
+    node {
+        post {
+            success {
+                echo "Despliegue exitoso."
+                echo "API  -> http://localhost:${BE_HOST_PORT}"
+                echo "Web  -> http://localhost:${FE_HOST_PORT}"
+            }
+            always {
+                // Limpiar imágenes huérfanas para no llenar el disco
+                sh 'docker image prune -f'
+            }
         }
     }
 }
