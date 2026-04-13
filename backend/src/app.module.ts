@@ -26,7 +26,7 @@ import { VistasModule } from './vistas/vistas.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'oracle',
+        type: (configService.get<string>('DB_TYPE') as any) || 'oracle',
         host: configService.get<string>('DB_HOST'),
         port: Number(configService.get<number>('DB_PORT')),
         username: configService.get<string>('DB_USERNAME'),
@@ -38,7 +38,7 @@ import { VistasModule } from './vistas/vistas.module';
         logging: true,
         extra: {
           poolMin: 1,
-          poolMax: 1,
+          poolMax: 10,
           poolIncrement: 0,
         },
       }),

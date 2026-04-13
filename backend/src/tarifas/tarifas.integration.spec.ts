@@ -25,7 +25,7 @@ describe('TarifasService - Pruebas de Integración (Oracle Real)', () => {
     module = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
-          type: process.env.DB_TYPE as any,
+          type: 'oracle',
           host: process.env.DB_HOST,
           port: Number(process.env.DB_PORT),
           username: process.env.DB_USERNAME,

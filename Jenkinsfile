@@ -17,6 +17,13 @@ pipeline {
         FE_IMAGE      = 'parkontrol-frontend'
         FE_CONTAINER  = 'parkontrol-web'
         FE_HOST_PORT  = '4200'
+        DB_TYPE       = 'oracle'
+        DB_SID        = 'xe'
+        JWT_SECRET    = 'dev-secret'
+        DB_LOCALHOST  = 'localhost'
+        DB_PORT       = '1521'
+        DB_USERNAME   = 'system'
+        DB_PASSWORD   = 'Admin123*'
     }
 
     stages {
