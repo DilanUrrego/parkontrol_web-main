@@ -181,7 +181,8 @@ pipeline {
             script {
                 node {
                     echo "Limpiando imágenes de docker..."
-                    sh 'docker image prune -f'
+                    //sh 'docker image prune -f'
+                    sh 'Finalizado con éxito'
                 }
             }
         }
