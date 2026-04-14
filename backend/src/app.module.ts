@@ -20,28 +20,42 @@ import { VistasModule } from './vistas/vistas.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: (configService.get<string>('DB_TYPE') as any) || 'oracle',
-        host: configService.get<string>('DB_HOST'),
-        port: Number(configService.get<number>('DB_PORT')),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        sid: configService.get<string>('DB_SID'),
-        synchronize: false,
-        dropSchema: false,
-        autoLoadEntities: true,
-        logging: true,
-        extra: {
-          poolMin: 1,
-          poolMax: 10,
-          poolIncrement: 0,
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        // Detectamos el tipo de base de datos desde el entorno
+        const dbType = configService.get<string>('DB_TYPE') || 'oracle';
+        const isSqlite = dbType === 'sqlite';
+
+        return {
+          type: dbType as any,
+          // Configuración condicional según el motor
+          host: isSqlite ? undefined : configService.get<string>('DB_HOST'),
+          port: isSqlite ? undefined : Number(configService.get<number>('DB_PORT')),
+          username: isSqlite ? undefined : configService.get<string>('DB_USERNAME'),
+          password: isSqlite ? undefined : configService.get<string>('DB_PASSWORD'),
+          sid: isSqlite ? undefined : configService.get<string>('DB_SID'),
+          
+          // SQLite en memoria para tests, de lo contrario no se usa database string en Oracle
+          database: isSqlite ? ':memory:' : undefined,
+          
+          // Sincronización automática solo para SQLite (evita borrar datos en Oracle)
+          synchronize: isSqlite, 
+          dropSchema: false,
+          autoLoadEntities: true,
+          logging: configService.get<string>('NODE_ENV') !== 'production',
+          
+          // El pool de conexiones solo aplica a Oracle
+          extra: isSqlite ? {} : {
+            poolMin: 1,
+            poolMax: 10,
+            poolIncrement: 1,
+          },
+        };
+      },
     }),
     SharedModule,
     AuthModule,

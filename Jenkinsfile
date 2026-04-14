@@ -60,7 +60,7 @@ pipeline {
                                 'DB_SID=xe',
                                 'NODE_ENV=test'
                             ]) {} 
-                            sh 'NODE_ENV=test DB_TYPE=aqlite npm run test:cov' 
+                            sh 'NODE_ENV=test DB_TYPE=sqlite npm run test:cov' 
                             }
                     }
                 }
