@@ -74,14 +74,8 @@ pipeline {
                     }
                     steps {
                         dir('frontend-angular') {
-                            script {
-                                // Limpiar completamente
-                                sh 'rm -rf node_modules package-lock.json .angular'
-                                // Instalar dependencias
-                                sh 'npm install'
-                                // Ejecutar pruebas
-                                sh 'npx ng test --watch=false --browsers=ChromeHeadless --no-watch'
-                            }
+                            // NO ejecutar npm ci aquí, ya está instalado
+                            sh 'npx ng test --watch=false --browsers=ChromeHeadless --no-watch'
                         }
                     }
                 }
