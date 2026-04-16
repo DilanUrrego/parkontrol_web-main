@@ -35,13 +35,21 @@ module.exports = function (config) {
 
     reporters: ['progress', 'kjhtml', 'coverage'],
 
+    browserDisconnectTimeout: 10000,
+    browserDisconnectTolerance: 3,
+    browserNoActivityTimeout: 60000,
+    captureTimeout: 120000,
+
+    singleRun: true,  // Esto es clave: cierra Karma después de ejecutar
+    autoWatch: false,
+
     customLaunchers: {  
       ChromeHeadlessCI: {  
         base: 'ChromeHeadless',  
-        flags: ['--no-sandbox', '--disable-gpu'],  
+        flags: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],  
       },  
     },  
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadlessCI'],
     restartOnFileChange: true
   });
 };
