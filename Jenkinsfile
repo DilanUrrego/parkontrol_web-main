@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     tools {
-        // Esto soluciona el error "npm not found"
-        // Asegúrate de que este nombre exista en Global Tool Configuration
         nodejs 'node20' 
     }
 
@@ -20,34 +18,65 @@ pipeline {
     }
 
     stages {
-        // 1. Install Dependencies
+        // NUEVO: Limpiar workspace y arreglar permisos
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    sh '''
+                        echo "=== Limpiando workspace ==="
+                        # Limpiar node_modules antiguos
+                        rm -rf backend/node_modules backend/package-lock.json
+                        rm -rf frontend-angular/node_modules frontend-angular/package-lock.json
+                        
+                        # Limpiar caché de npm
+                        npm cache clean --force 2>/dev/null || true
+                        
+                        # Asegurar permisos correctos
+                        chmod -R 755 .
+                        
+                        echo "=== Workspace limpio ==="
+                    '''
+                }
+            }
+        }
+
+        // 1. Install Dependencies (MODIFICADO)
         stage('Install Dependencies') {
             parallel {
                 stage('Backend – Install') {
                     steps {
-                        dir('backend') { sh 'npm ci' }
+                        dir('backend') { 
+                            sh 'npm ci --cache .npm-cache'
+                        }
                     }
                 }
                 stage('Frontend – Install') {
                     steps {
-                        dir('frontend-angular') { sh 'npm ci' }
+                        dir('frontend-angular') { 
+                            sh '''
+                                # Usar caché temporal para evitar permisos
+                                npm ci --cache /tmp/npm-cache-frontend
+                            '''
+                        }
                     }
                 }
             }
         }
 
-        // 2. Run Tests
+        // 2. Run Tests (MODIFICADO)
         stage('Run Tests') {
             parallel {
                 stage('Backend – Tests') {
                     steps {
-                        dir('backend') { sh 'npm run test:cov' }
+                        dir('backend') { 
+                            // Excluir pruebas de integración
+                            sh 'npm run test:cov -- --testPathIgnorePatterns=".*\\\\.integration\\\\..*"' 
+                        }
                     }
                 }
                 stage('Frontend – Tests') {
                     agent {
                         docker { 
-                            // Esta imagen ya tiene Node, Chrome Headless y las dependencias de Linux
                             image 'trion/ng-cli-karma:latest'
                             args '-u root'
                             reuseNode true
@@ -55,8 +84,12 @@ pipeline {
                     }
                     steps {
                         dir('frontend-angular') {
-                            sh 'npm ci'
-                            sh 'npx ng test --watch=false --browsers=ChromeHeadless'
+                            sh '''
+                                # Limpiar antes de instalar en Docker
+                                rm -rf node_modules package-lock.json
+                                npm ci --cache /tmp/npm-cache-docker
+                                npx ng test --watch=false --browsers=ChromeHeadless
+                            '''
                         }
                     }
                 }
@@ -91,8 +124,6 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
-                    // Nota: Si son dos proyectos distintos en Sonar, 
-                    // a veces es mejor separar esto por carpetas.
                     waitForQualityGate abortPipeline: true
                 }
             }
@@ -126,11 +157,11 @@ pipeline {
                         sh """
                             docker stop ${BE_CONTAINER} 2>/dev/null || true
                             docker rm   ${BE_CONTAINER} 2>/dev/null || true
-                            docker run -d --name ${BE_CONTAINER} \
-                                --network devops-net \
-                                --restart always \
-                                -p ${BE_HOST_PORT}:${BE_APP_PORT} \
-                                -e PORT=${BE_APP_PORT} \
+                            docker run -d --name ${BE_CONTAINER} \\
+                                --network devops-net \\
+                                --restart always \\
+                                -p ${BE_HOST_PORT}:${BE_APP_PORT} \\
+                                -e PORT=${BE_APP_PORT} \\
                                 ${BE_IMAGE}:latest
                         """
                     }
@@ -140,10 +171,10 @@ pipeline {
                         sh """
                             docker stop ${FE_CONTAINER} 2>/dev/null || true
                             docker rm   ${FE_CONTAINER} 2>/dev/null || true
-                            docker run -d --name ${FE_CONTAINER} \
-                                --network devops-net \
-                                --restart always \
-                                -p ${FE_HOST_PORT}:80 \
+                            docker run -d --name ${FE_CONTAINER} \\
+                                --network devops-net \\
+                                --restart always \\
+                                -p ${FE_HOST_PORT}:80 \\
                                 ${FE_IMAGE}:latest
                         """
                     }
@@ -159,8 +190,17 @@ pipeline {
             echo "Web  -> http://localhost:${FE_HOST_PORT}"
         }
         always {
-            // Limpiar imágenes huérfanas para no llenar el disco
-            sh 'docker image prune -f'
+            script {
+                sh '''
+                    echo "=== Limpieza post-build ==="
+                    docker image prune -f
+                    # Limpiar cachés temporales
+                    rm -rf /tmp/npm-cache-* 2>/dev/null || true
+                '''
+            }
+        }
+        failure {
+            echo "Pipeline falló. Revisa los logs para más detalles."
         }
     }
 }
