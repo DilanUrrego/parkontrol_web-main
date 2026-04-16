@@ -27,10 +27,19 @@ pipeline {
             steps {
                 sh '''
                     echo "=== Limpiando workspace ==="
+                    
+                    # Cambiar permisos de todo el workspace
+                    chmod -R 777 . 2>/dev/null || true
+                    chown -R $(whoami):$(whoami) . 2>/dev/null || true
+                    
+                    # Eliminar node_modules (forzar borrado)
                     rm -rf backend/node_modules backend/package-lock.json
                     rm -rf frontend-angular/node_modules frontend-angular/package-lock.json
                     rm -rf frontend-angular/.angular
+                    
+                    # Limpiar caché de npm
                     npm cache clean --force || true
+                    
                     echo "=== Workspace limpio ==="
                 '''
             }
