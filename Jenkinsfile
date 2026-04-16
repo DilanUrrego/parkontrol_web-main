@@ -74,10 +74,14 @@ pipeline {
                     }
                     steps {
                         dir('frontend-angular') {
-                            sh '''
-                                npm ci
-                                npx ng test --watch=false --browsers=ChromeHeadless --no-watch
-                            '''
+                            script {
+                                // Limpiar completamente
+                                sh 'rm -rf node_modules package-lock.json .angular'
+                                // Instalar dependencias
+                                sh 'npm install'
+                                // Ejecutar pruebas
+                                sh 'npx ng test --watch=false --browsers=ChromeHeadless --no-watch'
+                            }
                         }
                     }
                 }
