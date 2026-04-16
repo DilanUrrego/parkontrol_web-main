@@ -19,29 +19,32 @@ pipeline {
         FE_HOST_PORT  = '4200'
     }
 
-    stage('Clean Workspace') {
-        steps {
-            script {
-                sh '''
-                    echo "=== Limpiando workspace ==="
-                    # Cambiar propietario de todo a jenkins
-                    sudo chown -R jenkins:jenkins .
-                    sudo chmod -R 755 .
-                    
-                    # Eliminar node_modules completamente
-                    rm -rf backend/node_modules backend/package-lock.json
-                    rm -rf frontend-angular/node_modules frontend-angular/package-lock.json
-                    
-                    # Limpiar caché de npm
-                    npm cache clean --force || true
-                    
-                    echo "=== Workspace limpio ==="
-                '''
-            }
-        }
-    }
+    
 
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    sh '''
+                        echo "=== Limpiando workspace ==="
+                        # Cambiar propietario de todo a jenkins
+                        sudo chown -R jenkins:jenkins .
+                        sudo chmod -R 755 .
+                        
+                        # Eliminar node_modules completamente
+                        rm -rf backend/node_modules backend/package-lock.json
+                        rm -rf frontend-angular/node_modules frontend-angular/package-lock.json
+                        
+                        # Limpiar caché de npm
+                        npm cache clean --force || true
+                        
+                        echo "=== Workspace limpio ==="
+                    '''
+                }
+            }
+        }
+        
         // 1. Install Dependencies
         stage('Install Dependencies') {
             parallel {
