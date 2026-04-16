@@ -75,10 +75,14 @@ pipeline {
                     steps {
                         dir('frontend-angular') {
                             sh '''
-                                # Forzar salida después de las pruebas
-                                npx ng test --watch=false --browsers=ChromeHeadless --no-watch || true
-                                # Matar cualquier proceso remanente de Karma
-                                pkill -f karma || true
+                                # Establecer variable de entorno para Chrome
+                                export CHROME_BIN=/usr/bin/google-chrome
+                                
+                                # Ejecutar con flags de CI reforzados
+                                npx ng test --no-watch --no-progress --browsers=ChromeHeadlessCI || true
+                                
+                                # Limpieza radical de procesos
+                                ps aux | grep karma | awk '{print $2}' | xargs kill -9 2>/dev/null || true
                             '''
                         }
                     }

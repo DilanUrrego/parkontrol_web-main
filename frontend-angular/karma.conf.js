@@ -50,6 +50,6 @@ module.exports = function (config) {
       },  
     },  
     browsers: ['ChromeHeadlessCI'],
-    restartOnFileChange: true
+    restartOnFileChange: false,
   });
 };
