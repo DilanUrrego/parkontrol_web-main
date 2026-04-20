@@ -3,7 +3,7 @@ pipeline {
     
     tools {
         nodejs 'Node_22_13'
-        'org.custommonkey.staticanalysis.SonarRunnerInstallation' 'SonarScanner'
+        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarScanner'
     }
     
     stages {
