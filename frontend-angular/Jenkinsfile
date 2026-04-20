@@ -12,22 +12,21 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install and Test') {
             setps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Test and Coverage') {
-            steps {
-                sh 'ng test --no-watch --code-coverage'
+                dir('frontend-angular') {
+                    sh 'npm install'
+                    sh 'ng test --no-watch --code-coverage'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQubeServer') {
-                    sh 'sonar-scanner'
+                dir('frontend-angular') {    
+                    withSonarQubeEnv('SonarQubeServer') {
+                        sh 'sonar-scanner'
+                    }
                 }
             }
         }

@@ -12,22 +12,21 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install and Test') {
             steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Test & Coverage') {
-            steps {
-                sh 'npm run test:cov'
+                dir('backend') {
+                    sh 'npm install'
+                    sh 'npm run test:cov'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarServer') { 
-                    sh 'sonar-scanner'
+                dir('backend') {
+                    withSonarQubeEnv('SonarServer') { 
+                        sh 'sonar-scanner'
+                    }
                 }
             }
         }
