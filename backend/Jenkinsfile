@@ -22,10 +22,11 @@ pipeline {
                     script {
                         def snHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                         
-                        sh "sed -i 's|SF:.*src/|SF:src/|g' coverage/lcov.info"
+                        sh "grep -E '^SF:.*src/|^DA:|^BR:|^LH:|^LF:|^end_of_record' coverage/lcov.info > coverage/lcov_cleaned.info"
+                        sh "sed -i 's|SF:.*src/|SF:src/|g' coverage/lcov_cleaned.info"
 
                         withSonarQubeEnv('SonarServer') { 
-                        sh "${snHome}/bin/sonar-scanner -Dsonar.javascript.node.maxspace=512 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info -Dsonar.scm.disabled=true"
+                        sh "${snHome}/bin/sonar-scanner -Dsonar.javascript.node.maxspace=512 -Dsonar.javascript.lcov.reportPaths=coverage/lcov_cleaned.info -Dsonar.scm.disabled=true"
                         }
                     }
                 }
