@@ -49,7 +49,7 @@ module.exports = function (config) {
         flags: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],  
       },  
     },  
-    browsers: ['ChromeHeadlessCI'],
+    browsers: ['ChromeHeadless'],
     restartOnFileChange: false,
   });
 };

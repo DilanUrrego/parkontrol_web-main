@@ -11,7 +11,7 @@ pipeline {
             steps {
                 dir('frontend-angular') {
                     sh 'npm install'
-                    sh 'npm run ng test --no-watch --code-coverage --browsers=ChromeHeadless'
+                    sh 'npm run ng test --no-watch --no-progress --code-coverage --browsers=ChromeHeadless --single-run'
                 }
             }
         }
