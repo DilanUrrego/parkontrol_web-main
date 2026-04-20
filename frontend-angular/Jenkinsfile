@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'Node_22_13'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install dependencies') {
+            setps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Test and Coverage') {
+            steps {
+                sh 'ng test --no-watch --code-coverage'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQubeServer') {
+                    sh 'sonar-scanner'
+                }
+            }
+        }
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time:5, unit:'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
+}
