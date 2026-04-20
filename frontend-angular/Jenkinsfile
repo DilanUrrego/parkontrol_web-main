@@ -11,7 +11,7 @@ pipeline {
             steps {
                 dir('frontend-angular') {
                     sh 'npm install'
-                    sh 'npm run ng test --no-watch --code-coverage'
+                    sh 'npm run ng test --no-watch --code-coverage --browsers=ChromeHeadless'
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
         stage("Quality Gate") {
             steps {
                 dir('frontend-angular') {
-                    timeout(time:8, unit:'MINUTES') {
+                    timeout(time:5, unit:'MINUTES') {
                         waitForQualityGate abortPipeline: true
                     }
                 }
