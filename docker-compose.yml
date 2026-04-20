@@ -2,6 +2,12 @@ version: '3.8'
 services:  
   jenkins:
       image: jenkins/jenkins:lts
+      deploy:
+        resources:
+          limits:
+            memory: 2G
+      environment:
+        - JAVA_OPTS=-Xmx1024m -Xms512m
       container_name: jenkins
       ports:
         - "8080:8080"
@@ -14,6 +20,10 @@ services:
         
   sonarqube:  
     image: sonarqube:community  
+    deploy:
+      resources:
+        limits:
+          memory: 2G
     container_name: sonarqube  
     ports:  
       - "9000:9000"  
