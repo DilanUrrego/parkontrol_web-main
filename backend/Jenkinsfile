@@ -23,7 +23,7 @@ pipeline {
                         def snHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                         
                         withSonarQubeEnv('SonarServer') { 
-                        sh "${snHome}/bin/sonar-scanner"
+                        sh "${snHome}/bin/sonar-scanner -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info"
                         }
                     }
                 }
