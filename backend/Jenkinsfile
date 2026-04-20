@@ -25,7 +25,7 @@ pipeline {
                         sh "sed -i 's|SF:.*src/|SF:src/|g' coverage/lcov.info"
 
                         withSonarQubeEnv('SonarServer') { 
-                        sh "${snHome}/bin/sonar-scanner -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info"
+                        sh "${snHome}/bin/sonar-scanner -Dsonar.javascript.node.maxspace=512 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info -Dsonar.scm.disabled=true"
                         }
                     }
                 }
