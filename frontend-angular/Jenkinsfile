@@ -11,7 +11,7 @@ pipeline {
             steps {
                 dir('frontend-angular') {
                     sh 'npm install'
-                    sh 'ng test --no-watch --code-coverage'
+                    sh 'npm run ng test --no-watch --code-coverage'
                 }
             }
         }
